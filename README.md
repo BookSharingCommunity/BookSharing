@@ -1,2 +1,2 @@
 # BookSharing
-This is a webapp which creates a community of collage students, who can buy, sell and share their books.
+A webapp for buying, selling and sharing college books in a local campus community. The goal of this app is to foster a community through the interactions and services it provides.
