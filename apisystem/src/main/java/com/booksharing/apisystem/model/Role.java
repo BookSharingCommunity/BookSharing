@@ -2,24 +2,22 @@ package com.booksharing.apisystem.model;
 
 import jakarta.persistence.*;
 
-import java.util.Collection;
-
 @Entity
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long roleId;
     private String name;
 
     public Role() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getName() {

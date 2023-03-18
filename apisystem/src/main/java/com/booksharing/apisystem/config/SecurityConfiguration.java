@@ -37,8 +37,12 @@ public class SecurityConfiguration {
     SecurityFilterChain anonymousChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                //.authorizeHttpRequests( auth -> auth.requestMatchers("/api/register", "/api/users/get/**", "/api/verify").anonymous() )
-                .authorizeHttpRequests( auth -> auth.anyRequest().permitAll())
+                //Calls everyone can use
+                .authorizeHttpRequests( auth -> auth.requestMatchers("/api/register", "/api/users/get/**", "/api/books/search/**").permitAll() )
+                //Admin Only Calls
+                .authorizeHttpRequests( auth -> auth.requestMatchers("/api/users/remove/**", "/api/users/getall").hasAuthority("SCOPE_ADVANCED"))
+                //Calls registered users can use
+                .authorizeHttpRequests( auth -> auth.requestMatchers("/api/token").hasAnyRole("USER", "ADMIN").anyRequest().hasAuthority("SCOPE_BASIC"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .httpBasic(withDefaults())

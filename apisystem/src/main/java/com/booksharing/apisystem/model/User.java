@@ -1,15 +1,14 @@
 package com.booksharing.apisystem.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.Collection;
+import java.sql.Blob;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -20,30 +19,52 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @ManyToMany
-    @JoinTable (
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Collection<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "roleId", nullable = false)
+    private Role role;
+
+    @Column
+    private String userYear;
+
+    @Lob
+    @Column
+    private byte[] pPic;
+
+    @Column
+    private int sellRate;
+
+    @Column
+    private int sellCount;
+
+    @Column
+    private int buyRate;
+
+    @Column
+    private int buyCount;
 
     public User() {
     }
 
-    public User(Long id, String username, String email, String password) {
-        this.id = id;
+    public User(Long userId, String username, String password, String email, Role role, String userYear, byte[] pPic, int sellRate, int sellCount, int buyRate, int buyCount) {
+        this.userId = userId;
         this.username = username;
-        this.email = email;
         this.password = password;
+        this.email = email;
+        this.role = role;
+        this.userYear = userYear;
+        this.pPic = pPic;
+        this.sellRate = sellRate;
+        this.sellCount = sellCount;
+        this.buyRate = buyRate;
+        this.buyCount = buyCount;
     }
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -55,18 +76,11 @@ public class User {
     }
 
     public String getPassword() {
-        return this.password;
+        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
     }
 
     public String getEmail() {
@@ -75,5 +89,61 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getUserYear() {
+        return userYear;
+    }
+
+    public void setUserYear(String userYear) {
+        this.userYear = userYear;
+    }
+
+    public byte[] getpPic() {
+        return pPic;
+    }
+
+    public void setpPic(byte[] pPic) {
+        this.pPic = pPic;
+    }
+
+    public int getSellRate() {
+        return sellRate;
+    }
+
+    public void setSellRate(int sellRate) {
+        this.sellRate = sellRate;
+    }
+
+    public int getSellCount() {
+        return sellCount;
+    }
+
+    public void setSellCount(int sellCount) {
+        this.sellCount = sellCount;
+    }
+
+    public int getBuyRate() {
+        return buyRate;
+    }
+
+    public void setBuyRate(int buyRate) {
+        this.buyRate = buyRate;
+    }
+
+    public int getBuyCount() {
+        return buyCount;
+    }
+
+    public void setBuyCount(int buyCount) {
+        this.buyCount = buyCount;
     }
 }

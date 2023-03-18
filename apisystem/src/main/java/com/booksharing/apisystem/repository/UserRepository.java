@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // MySql: SELECT * FROM user_account WHERE username=<USERNAME>;
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
+
+    User findByUserId(long id);
 }
