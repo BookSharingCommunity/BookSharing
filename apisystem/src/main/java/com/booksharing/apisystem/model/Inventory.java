@@ -30,12 +30,11 @@ public class Inventory {
         this.picture = picture;
     }
 
-    public Inventory(User userId, Book bookId, String cond, float price, byte[] picture) {
+    public Inventory(User userId, Book bookId, String cond, float price) {
         this.userId = userId;
         this.bookId = bookId;
         this.cond = cond;
         this.price = price;
-        this.picture = picture;
     }
 
     public Inventory(){}

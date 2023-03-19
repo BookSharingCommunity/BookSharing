@@ -142,7 +142,7 @@ public class UserAccountServiceImpl implements UserAccountService{
         Book book = bookRepository.findByBookId(req.getBookId());
         if(user == null) throw new RuntimeException("Invalid User Id was provided!");
         if(book == null) throw new RuntimeException("Invalid Book Id was provided!");
-        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice(), req.getPfp());
+        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice());
         return inventoryRepository.save(inventory);
     }
 
