@@ -23,4 +23,6 @@ public interface UserAccountService {
     public Book removeBook(long bookId);
     public Inventory addInventory(NewInventoryRequest invreq);
     public Inventory removeInventory(long invId);
+
+    public List<Inventory> getAllInventories();
 }

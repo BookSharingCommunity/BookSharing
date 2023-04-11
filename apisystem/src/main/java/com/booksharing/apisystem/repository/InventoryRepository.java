@@ -12,4 +12,6 @@ import java.util.List;
 public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
     public List<Inventory> findInventoryByBookId(Book bookId);
     public Inventory findByInvId(long invId);
+
+
 }

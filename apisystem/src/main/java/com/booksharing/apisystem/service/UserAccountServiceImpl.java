@@ -142,7 +142,7 @@ public class UserAccountServiceImpl implements UserAccountService{
         Book book = bookRepository.findByBookId(req.getBookId());
         if(user == null) throw new RuntimeException("Invalid User Id was provided!");
         if(book == null) throw new RuntimeException("Invalid Book Id was provided!");
-        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice());
+        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice(), req.getPfp());
         return inventoryRepository.save(inventory);
     }
 
@@ -152,5 +152,10 @@ public class UserAccountServiceImpl implements UserAccountService{
         if(inventory == null) throw new RuntimeException();
         inventoryRepository.delete(inventory);
         return inventory;
+    }
+
+    @Override
+    public List<Inventory> getAllInventories() {
+        return inventoryRepository.findAll();
     }
 }

@@ -72,4 +72,7 @@ public class UserAccountController {
 
     @DeleteMapping("/inventory/remove/{inventory}")
     public Inventory removeInventory(@PathVariable long inventory) { return userAccountService.removeInventory(inventory); }
+
+    @GetMapping("inventory/getall")
+    public List<Inventory> getAllInventory() { return userAccountService.getAllInventories(); }
 }
