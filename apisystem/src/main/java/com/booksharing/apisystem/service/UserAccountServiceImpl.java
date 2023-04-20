@@ -1,17 +1,11 @@
 package com.booksharing.apisystem.service;
 
 import com.booksharing.apisystem.exceptions.*;
-import com.booksharing.apisystem.model.Book;
-import com.booksharing.apisystem.model.Inventory;
-import com.booksharing.apisystem.model.Role;
-import com.booksharing.apisystem.model.User;
-import com.booksharing.apisystem.repository.BookRepository;
-import com.booksharing.apisystem.repository.InventoryRepository;
-import com.booksharing.apisystem.repository.RoleRepository;
-import com.booksharing.apisystem.repository.UserRepository;
+import com.booksharing.apisystem.model.*;
+import com.booksharing.apisystem.model.Thread;
+import com.booksharing.apisystem.repository.*;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +33,14 @@ public class UserAccountServiceImpl implements UserAccountService{
 
     @Autowired
     private InventoryRepository inventoryRepository;
+
+    @Autowired
+    private ThreadRepository threadRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -142,7 +144,7 @@ public class UserAccountServiceImpl implements UserAccountService{
         Book book = bookRepository.findByBookId(req.getBookId());
         if(user == null) throw new RuntimeException("Invalid User Id was provided!");
         if(book == null) throw new RuntimeException("Invalid Book Id was provided!");
-        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice(), req.getPfp());
+        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice(), req.getPicture());
         return inventoryRepository.save(inventory);
     }
 
@@ -157,5 +159,51 @@ public class UserAccountServiceImpl implements UserAccountService{
     @Override
     public List<Inventory> getAllInventories() {
         return inventoryRepository.findAll();
+    }
+
+    @Override
+    public List<Thread> getUserThreads(User user) {
+        return threadRepository.findPossibleThreads(user.getUserId());
+    }
+
+    @Override
+    public Thread addUserThread(User buyer, User seller) {
+        Thread thread = new Thread();
+        thread.setBuyerId(buyer);
+        thread.setSellerId(seller);
+        return threadRepository.save(thread);
+    }
+
+    @Override
+    public Thread deleteUserThread(Thread thread) {
+        threadRepository.delete(thread);
+        messageRepository.deleteByThreadId(thread.getThreadId());
+        return thread;
+    }
+
+    @Override
+    public List<Message> getThreadMessages(Long threadId) {
+        return messageRepository.searchByMatch(threadId);
+    }
+
+    @Override
+    public Message addThreadMessage(Message message) {
+        return messageRepository.save(message);
+    }
+    @Override
+    public List<Review> getUserReviews(long userid) {
+        return reviewRepository.findByUserId(userid);
+    }
+    @Override
+    public Review addUserReview(String type, float rating, String username){
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isEmpty()) throw new RuntimeException();
+        Review review = new Review(type, user.get(), rating);
+        return reviewRepository.save(review);
+    }
+    @Override
+    public Review deleteUserReview(Review review){
+        reviewRepository.delete(review);
+        return review;
     }
 }

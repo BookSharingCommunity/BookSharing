@@ -17,11 +17,10 @@ public class Inventory {
     private String cond;
     @Column(nullable = false)
     private float price;
-    @Lob
     @Column
-    private byte[] picture;
+    private String picture;
 
-    public Inventory(Long invId, User userId, Book bookId, String cond, float price, byte[] picture) {
+    public Inventory(Long invId, User userId, Book bookId, String cond, float price, String picture) {
         this.invId = invId;
         this.userId = userId;
         this.bookId = bookId;
@@ -30,7 +29,7 @@ public class Inventory {
         this.picture = picture;
     }
 
-    public Inventory(User userId, Book bookId, String cond, float price) {
+    public Inventory(User userId, Book bookId, String cond, float price, String picture) {
         this.userId = userId;
         this.bookId = bookId;
         this.cond = cond;
@@ -79,11 +78,11 @@ public class Inventory {
         this.price = price;
     }
 
-    public byte[] getPicture() {
+    public String getPicture() {
         return picture;
     }
 
-    public void setPicture(byte[] picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 }

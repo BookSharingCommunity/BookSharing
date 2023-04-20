@@ -13,5 +13,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query("SELECT r FROM Book r WHERE r.isbn LIKE %:search% OR r.title LIKE %:search%")
     public List<Book> searchByMatch(@Param("search") String search);
 
+    //@Query("SELECT r FROM Book r WHERE r.isbn = %:search% AND r.title = %:title%")
+    //public List<Book> searchByIsbnAndTitle(@Param("isbn") String isbn, @Param("title") String title);
+
     public Book findByBookId(long bookId);
 }

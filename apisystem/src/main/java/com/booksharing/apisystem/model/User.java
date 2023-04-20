@@ -2,8 +2,6 @@ package com.booksharing.apisystem.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Blob;
-
 @Entity
 public class User {
     @Id

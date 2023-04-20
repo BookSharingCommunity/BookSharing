@@ -1,8 +1,7 @@
 package com.booksharing.apisystem.controller;
 
-import com.booksharing.apisystem.model.Book;
-import com.booksharing.apisystem.model.Inventory;
-import com.booksharing.apisystem.model.User;
+import com.booksharing.apisystem.model.*;
+import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
 import com.booksharing.apisystem.service.AuthenticationService;
 import com.booksharing.apisystem.service.TokenService;
@@ -35,7 +34,9 @@ public class UserAccountController {
 
     //Deletes user from database
     @DeleteMapping("/users/remove/{user}")
-    public String remove(@PathVariable long user) { return userAccountService.removeUser(user);}
+    public String remove(@PathVariable long user) {
+        return userAccountService.removeUser(user);
+    }
 
     //Returns all users' information
     @GetMapping("/users/getall")
@@ -53,26 +54,74 @@ public class UserAccountController {
     public String updatePassword(@PathVariable String email, @RequestBody User user) {
         return userAccountService.updatePassword(email, user);
     }
+
     @PostMapping("/token")
     public String token(Authentication authentication) {
         return tokenService.generateToken(authentication);
     }
 
     @GetMapping("/books/search/{search}")
-    public List<Inventory> findBooks(@PathVariable String search) { return userAccountService.findBooks(search);}
+    public List<Inventory> findBooks(@PathVariable String search) {
+        return userAccountService.findBooks(search);
+    }
 
     @PostMapping("/books/add")
-    public Book addBook(@RequestBody Book book) { return userAccountService.addBook(book); }
+    public Book addBook(@RequestBody Book book) {
+        return userAccountService.addBook(book);
+    }
 
     @DeleteMapping("/books/remove/{book}")
-    public Book removeBook(@PathVariable long book) { return userAccountService.removeBook(book); }
+    public Book removeBook(@PathVariable long book) {
+        return userAccountService.removeBook(book);
+    }
 
     @PostMapping("/inventory/add")
-    public Inventory addInventory(@RequestBody NewInventoryRequest invreq) { return userAccountService.addInventory(invreq); }
+    public Inventory addInventory(@RequestBody NewInventoryRequest invreq) {
+        return userAccountService.addInventory(invreq);
+    }
 
     @DeleteMapping("/inventory/remove/{inventory}")
-    public Inventory removeInventory(@PathVariable long inventory) { return userAccountService.removeInventory(inventory); }
+    public Inventory removeInventory(@PathVariable long inventory) {
+        return userAccountService.removeInventory(inventory);
+    }
 
     @GetMapping("inventory/getall")
-    public List<Inventory> getAllInventory() { return userAccountService.getAllInventories(); }
+    public List<Inventory> getAllInventory() {
+        return userAccountService.getAllInventories();
+    }
+
+    @GetMapping("threads/get/{username}")
+    public List<Thread> getAllThreads(@PathVariable String username) {
+        return userAccountService.getUserThreads(userAccountService.getUserByUsername(username));
+    }
+
+    @PostMapping("threads/add")
+    public Thread addThread(@RequestBody User buyer, @RequestBody User seller) {
+        return userAccountService.addUserThread(buyer, seller);
+    }
+
+    @DeleteMapping("threads/delete")
+    public Thread deleteThread(@RequestBody Thread thread) {
+        return userAccountService.deleteUserThread(thread);
+    }
+
+    @GetMapping("messages/get/{threadId}")
+    public List<Message> getMessages(@PathVariable Long threadId) {
+        return userAccountService.getThreadMessages(threadId);
+    }
+
+    @PostMapping("messages/add")
+    public Message addMessage(@RequestBody Message msg) {
+        return userAccountService.addThreadMessage(msg);
+    }
+
+    @PostMapping("review/add")
+    public Review addReview(@RequestBody String type, @RequestBody float rating, @RequestBody String username) {
+        return userAccountService.addUserReview(type, rating, username);
+    }
+
+    @GetMapping("review/get/{username}")
+    public List<Review> getUserReviews(@PathVariable Long userid) {
+        return userAccountService.getUserReviews(userid);
+    }
 }

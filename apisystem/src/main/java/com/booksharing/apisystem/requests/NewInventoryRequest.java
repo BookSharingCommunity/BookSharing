@@ -5,14 +5,14 @@ public class NewInventoryRequest {
     private long userId;
     private String cond;
     private float price;
-    private byte[] pfp;
+    private String picture;
 
-    public NewInventoryRequest(long userId, long bookId, String cond, float price, byte[] pfp){
+    public NewInventoryRequest(long userId, long bookId, String cond, float price, String picture){
         this.bookId = bookId;
         this.userId = userId;
         this.cond = cond;
         this.price = price;
-        this.pfp = pfp;
+        this.picture = picture;
     }
 
     public long getBookId() {
@@ -47,11 +47,11 @@ public class NewInventoryRequest {
         this.price = price;
     }
 
-    public byte[] getPfp() {
-        return pfp;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setPfp(byte[] pfp) {
-        this.pfp = pfp;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }
