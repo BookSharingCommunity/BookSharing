@@ -10,9 +10,6 @@ public class Inventory {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User userId;
-    @ManyToOne
-    @JoinColumn(name = "bookId")
-    private Book bookId;
     @Column(nullable = false)
     private String cond;
     @Column(nullable = false)
@@ -20,20 +17,21 @@ public class Inventory {
     @Column
     private String picture;
 
-    public Inventory(Long invId, User userId, Book bookId, String cond, float price, String picture) {
-        this.invId = invId;
+    @Column(nullable = false)
+    private String isbn;
+    @Column(nullable = false)
+    private String title;
+    @Column
+    private float version;
+
+    public Inventory(User userId, String cond, float price, String picture, String isbn, String title, float version) {
         this.userId = userId;
-        this.bookId = bookId;
         this.cond = cond;
         this.price = price;
         this.picture = picture;
-    }
-
-    public Inventory(User userId, Book bookId, String cond, float price, String picture) {
-        this.userId = userId;
-        this.bookId = bookId;
-        this.cond = cond;
-        this.price = price;
+        this.isbn = isbn;
+        this.title = title;
+        this.version = version;
     }
 
     public Inventory(){}
@@ -52,14 +50,6 @@ public class Inventory {
 
     public void setUserId(User userId) {
         this.userId = userId;
-    }
-
-    public Book getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Book bookId) {
-        this.bookId = bookId;
     }
 
     public String getCond() {
@@ -84,5 +74,29 @@ public class Inventory {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public float getVersion() {
+        return version;
+    }
+
+    public void setVersion(float version) {
+        this.version = version;
     }
 }

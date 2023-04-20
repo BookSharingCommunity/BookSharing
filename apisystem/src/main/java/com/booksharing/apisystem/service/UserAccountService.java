@@ -23,21 +23,17 @@ public interface UserAccountService {
 
     public String updatePassword(String email, User user);
 
-    public List<Inventory> findBooks(String search);
-
-    public Book addBook(Book book);
-
-    public Book removeBook(long bookId);
-
     public Inventory addInventory(NewInventoryRequest invreq);
 
     public Inventory removeInventory(long invId);
+
+    public List<Inventory> searchInventory(String search);
 
     public List<Inventory> getAllInventories();
 
     public List<Thread> getUserThreads(User user);
 
-    public Thread addUserThread(User buyer, User seller);
+    public Thread addUserThread(String buyer, String seller);
 
     public Thread deleteUserThread(Thread thread);
 

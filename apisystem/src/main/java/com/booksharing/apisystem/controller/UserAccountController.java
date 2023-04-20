@@ -60,21 +60,6 @@ public class UserAccountController {
         return tokenService.generateToken(authentication);
     }
 
-    @GetMapping("/books/search/{search}")
-    public List<Inventory> findBooks(@PathVariable String search) {
-        return userAccountService.findBooks(search);
-    }
-
-    @PostMapping("/books/add")
-    public Book addBook(@RequestBody Book book) {
-        return userAccountService.addBook(book);
-    }
-
-    @DeleteMapping("/books/remove/{book}")
-    public Book removeBook(@PathVariable long book) {
-        return userAccountService.removeBook(book);
-    }
-
     @PostMapping("/inventory/add")
     public Inventory addInventory(@RequestBody NewInventoryRequest invreq) {
         return userAccountService.addInventory(invreq);
@@ -90,13 +75,19 @@ public class UserAccountController {
         return userAccountService.getAllInventories();
     }
 
+    @GetMapping("inventory/search/{request}")
+    public List<Inventory> getAllInventory(@PathVariable String request) {
+        return userAccountService.searchInventory(request);
+    }
+
     @GetMapping("threads/get/{username}")
     public List<Thread> getAllThreads(@PathVariable String username) {
         return userAccountService.getUserThreads(userAccountService.getUserByUsername(username));
     }
 
-    @PostMapping("threads/add")
-    public Thread addThread(@RequestBody User buyer, @RequestBody User seller) {
+    @PostMapping("threads/add/{buyer}/{seller}")
+    public Thread addThread(@PathVariable String buyer, @PathVariable String seller) {
+
         return userAccountService.addUserThread(buyer, seller);
     }
 

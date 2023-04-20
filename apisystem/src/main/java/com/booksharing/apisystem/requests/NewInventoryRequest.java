@@ -2,17 +2,24 @@ package com.booksharing.apisystem.requests;
 
 public class NewInventoryRequest {
     private long bookId;
-    private long userId;
+    private String username;
     private String cond;
     private float price;
     private String picture;
+    private String isbn;
+    private String title;
 
-    public NewInventoryRequest(long userId, long bookId, String cond, float price, String picture){
+    private float version;
+
+    public NewInventoryRequest(long bookId, String username, String cond, float price, String picture, String isbn, String title, float version) {
         this.bookId = bookId;
-        this.userId = userId;
+        this.username = username;
         this.cond = cond;
         this.price = price;
         this.picture = picture;
+        this.isbn = isbn;
+        this.title = title;
+        this.version = version;
     }
 
     public long getBookId() {
@@ -23,12 +30,12 @@ public class NewInventoryRequest {
         this.bookId = bookId;
     }
 
-    public long getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getCond() {
@@ -53,5 +60,29 @@ public class NewInventoryRequest {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public float getVersion() {
+        return version;
+    }
+
+    public void setVersion(float version) {
+        this.version = version;
     }
 }

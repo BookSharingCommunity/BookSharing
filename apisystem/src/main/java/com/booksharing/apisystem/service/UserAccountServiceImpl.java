@@ -29,9 +29,6 @@ public class UserAccountServiceImpl implements UserAccountService{
     private RoleRepository roleRepository;
 
     @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
     private InventoryRepository inventoryRepository;
 
     @Autowired
@@ -115,36 +112,10 @@ public class UserAccountServiceImpl implements UserAccountService{
     }
 
     @Override
-    public List<Inventory> findBooks(String search) {
-        List<Inventory> allMatches = new ArrayList<>();
-        List<Book> books = bookRepository.searchByMatch(search);
-        for(Book book: books) {
-            List<Inventory> matches = inventoryRepository.findInventoryByBookId(book);
-            if(!matches.isEmpty()) matches.forEach(match -> allMatches.add(match));
-        }
-        return allMatches;
-    }
-
-    @Override
-    public Book addBook(Book book) {
-        return bookRepository.save(book);
-    }
-
-    @Override
-    public Book removeBook(long bookId) {
-        Book book = bookRepository.findByBookId(bookId);
-        if(book == null) throw new RuntimeException();
-        bookRepository.delete(book);
-        return book;
-    }
-
-    @Override
     public Inventory addInventory(NewInventoryRequest req) {
-        User user = userRepository.findByUserId(req.getUserId());
-        Book book = bookRepository.findByBookId(req.getBookId());
-        if(user == null) throw new RuntimeException("Invalid User Id was provided!");
-        if(book == null) throw new RuntimeException("Invalid Book Id was provided!");
-        Inventory inventory = new Inventory(user, book, req.getCond(), req.getPrice(), req.getPicture());
+        Optional<User> user = userRepository.findByUsername(req.getUsername());
+        if(user.isEmpty()) throw new RuntimeException("User does not exist");
+        Inventory inventory = new Inventory(user.get(), req.getCond(), req.getPrice(), req.getPicture(), req.getIsbn(), req.getTitle(), req.getVersion());
         return inventoryRepository.save(inventory);
     }
 
@@ -154,6 +125,11 @@ public class UserAccountServiceImpl implements UserAccountService{
         if(inventory == null) throw new RuntimeException();
         inventoryRepository.delete(inventory);
         return inventory;
+    }
+
+    @Override
+    public List<Inventory> searchInventory(String search) {
+        return inventoryRepository.searchForMatch(search);
     }
 
     @Override
@@ -167,10 +143,13 @@ public class UserAccountServiceImpl implements UserAccountService{
     }
 
     @Override
-    public Thread addUserThread(User buyer, User seller) {
+    public Thread addUserThread(String buyer, String seller) {
+        Optional<User> buyerObj = userRepository.findByUsername(buyer);
+        Optional<User> sellerObj = userRepository.findByUsername(seller);
+        if(buyerObj.isEmpty() || sellerObj.isEmpty()) throw new RuntimeException("A non-existant username was provided");
         Thread thread = new Thread();
-        thread.setBuyerId(buyer);
-        thread.setSellerId(seller);
+        thread.setBuyerId(buyerObj.get());
+        thread.setSellerId(sellerObj.get());
         return threadRepository.save(thread);
     }
 
