@@ -28,6 +28,7 @@ public interface UserAccountService {
     public Inventory removeInventory(long invId);
 
     public List<Inventory> searchInventory(String search);
+    public Inventory getInventory(long invId);
 
     public List<Inventory> getAllInventories();
 
@@ -41,7 +42,7 @@ public interface UserAccountService {
 
     public Message addThreadMessage(Message message);
 
-    public List<Review> getUserReviews(long userId);
+    public List<Review> getUserReviews(String username, String type);
 
     public Review addUserReview(String type, float rating, String username);
     public Review deleteUserReview(Review review);

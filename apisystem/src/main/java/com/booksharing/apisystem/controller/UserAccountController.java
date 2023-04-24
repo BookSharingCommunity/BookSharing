@@ -65,6 +65,11 @@ public class UserAccountController {
         return userAccountService.addInventory(invreq);
     }
 
+    @GetMapping("/inventory/get/{id}")
+    public Inventory getInventory(@PathVariable long id) {
+        return userAccountService.getInventory(id);
+    }
+
     @DeleteMapping("/inventory/remove/{inventory}")
     public Inventory removeInventory(@PathVariable long inventory) {
         return userAccountService.removeInventory(inventory);
@@ -106,13 +111,13 @@ public class UserAccountController {
         return userAccountService.addThreadMessage(msg);
     }
 
-    @PostMapping("review/add")
-    public Review addReview(@RequestBody String type, @RequestBody float rating, @RequestBody String username) {
-        return userAccountService.addUserReview(type, rating, username);
+    @PostMapping("review/add/{username}")
+    public Review addReview(@RequestBody Review review, @PathVariable String username) {
+        return userAccountService.addUserReview(review.getServiceType(), review.getRating(), username);
     }
 
-    @GetMapping("review/get/{username}")
-    public List<Review> getUserReviews(@PathVariable Long userid) {
-        return userAccountService.getUserReviews(userid);
+    @GetMapping("review/get/{type}/{username}")
+    public List<Review> getUserReviews(@PathVariable String type, @PathVariable String username) {
+        return userAccountService.getUserReviews(username, type);
     }
 }

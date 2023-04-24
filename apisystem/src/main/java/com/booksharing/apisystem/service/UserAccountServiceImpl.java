@@ -128,6 +128,13 @@ public class UserAccountServiceImpl implements UserAccountService{
     }
 
     @Override
+    public Inventory getInventory(long invId) {
+        Inventory inventory = inventoryRepository.findByInvId(invId);
+        if(inventory == null) throw new RuntimeException();
+        return inventory;
+    }
+
+    @Override
     public List<Inventory> searchInventory(String search) {
         return inventoryRepository.searchForMatch(search);
     }
@@ -146,7 +153,7 @@ public class UserAccountServiceImpl implements UserAccountService{
     public Thread addUserThread(String buyer, String seller) {
         Optional<User> buyerObj = userRepository.findByUsername(buyer);
         Optional<User> sellerObj = userRepository.findByUsername(seller);
-        if(buyerObj.isEmpty() || sellerObj.isEmpty()) throw new RuntimeException("A non-existant username was provided");
+        if(buyerObj.isEmpty() || sellerObj.isEmpty()) throw new RuntimeException("A non-existent username was provided");
         Thread thread = new Thread();
         thread.setBuyerId(buyerObj.get());
         thread.setSellerId(sellerObj.get());
@@ -170,8 +177,16 @@ public class UserAccountServiceImpl implements UserAccountService{
         return messageRepository.save(message);
     }
     @Override
-    public List<Review> getUserReviews(long userid) {
-        return reviewRepository.findByUserId(userid);
+    public List<Review> getUserReviews(String username, String type) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isEmpty()) throw new RuntimeException("A non-existent username was provided");
+        switch (type) {
+            case "buyer":
+                return reviewRepository.getUserBuyerRatings(user.get().getUserId(), "buyer");
+            case "seller":
+                return reviewRepository.getUserBuyerRatings(user.get().getUserId(), "seller");
+            default: throw new RuntimeException("An invalid rating time has been provided! Please user buyer or seller!");
+        }
     }
     @Override
     public Review addUserReview(String type, float rating, String username){
