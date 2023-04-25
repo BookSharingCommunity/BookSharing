@@ -5,6 +5,7 @@ import com.booksharing.apisystem.model.*;
 import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.repository.*;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.UpdateUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -89,26 +90,19 @@ public class UserAccountServiceImpl implements UserAccountService{
     }
 
     @Override
-    public String updatePassword(String email, User user) {
-        //Updates the account's password and returns either success message or error message
-
-        //Handle input errors
-        if(user.getUsername() == null || user.getPassword() == null) throw new NullPasswordChangeAttemptException();
-        if(!user.getUsername().equals(email)) throw new RequestEmailInputsException();
-
-        //Find email in database
-        Optional<User> result = userRepository.findByUsername(email);
-
-        //Handle if not found
-        if(result.isEmpty()) throw new EmailNotFoundException(email);
-
+    public User updateUser(String username, UpdateUserRequest request) {
         //Update Password
-        User temp = result.get();
-        temp.setPassword(encoder.encode(user.getPassword()));
-        user = temp;
+        Optional<User> temp = userRepository.findByUsername(username);
 
+        if(temp.isEmpty()) throw new RuntimeException("No user was found with the provided username");
+
+        User user = temp.get();
+        user.setUserYear(request.getUserYear());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(encoder.encode(request.getPassword()));
         userRepository.save(user);
-        return "Password has been successfully updated for the email: " + email;
+        return user;
     }
 
     @Override

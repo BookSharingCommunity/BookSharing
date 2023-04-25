@@ -24,9 +24,8 @@ public class User {
     @Column
     private String userYear;
 
-    @Lob
     @Column
-    private byte[] pPic;
+    private String pPic;
 
     @Column
     private int sellRate;
@@ -43,7 +42,7 @@ public class User {
     public User() {
     }
 
-    public User(Long userId, String username, String password, String email, Role role, String userYear, byte[] pPic, int sellRate, int sellCount, int buyRate, int buyCount) {
+    public User(Long userId, String username, String password, String email, Role role, String userYear, String pPic, int sellRate, int sellCount, int buyRate, int buyCount) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -105,11 +104,11 @@ public class User {
         this.userYear = userYear;
     }
 
-    public byte[] getpPic() {
+    public String getpPic() {
         return pPic;
     }
 
-    public void setpPic(byte[] pPic) {
+    public void setpPic(String pPic) {
         this.pPic = pPic;
     }
 

@@ -3,6 +3,7 @@ package com.booksharing.apisystem.service;
 import com.booksharing.apisystem.model.*;
 import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.UpdateUserRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,9 @@ public interface UserAccountService {
     public User getUserByEmail(String email);
 
     public User getUserByUsername(String username);
+    public User updateUser(String username, UpdateUserRequest update);
 
     public String removeUser(long userId);
-
-    public String updatePassword(String email, User user);
 
     public Inventory addInventory(NewInventoryRequest invreq);
 

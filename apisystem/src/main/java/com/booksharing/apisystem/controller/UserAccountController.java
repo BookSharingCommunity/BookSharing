@@ -3,6 +3,7 @@ package com.booksharing.apisystem.controller;
 import com.booksharing.apisystem.model.*;
 import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.UpdateUserRequest;
 import com.booksharing.apisystem.service.AuthenticationService;
 import com.booksharing.apisystem.service.TokenService;
 import com.booksharing.apisystem.service.UserAccountService;
@@ -50,9 +51,9 @@ public class UserAccountController {
     }
 
     //Updates the user's password
-    @PutMapping("/passwords/{email}")
-    public String updatePassword(@PathVariable String email, @RequestBody User user) {
-        return userAccountService.updatePassword(email, user);
+    @PutMapping("/users/update/{username}")
+    public User updateUser(@PathVariable String username, @RequestBody UpdateUserRequest request) {
+        return userAccountService.updateUser(username, request);
     }
 
     @PostMapping("/token")
