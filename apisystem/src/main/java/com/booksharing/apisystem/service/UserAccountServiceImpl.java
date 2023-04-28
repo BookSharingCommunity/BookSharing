@@ -5,6 +5,7 @@ import com.booksharing.apisystem.model.*;
 import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.repository.*;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.NewMessageRequest;
 import com.booksharing.apisystem.requests.UpdateUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -167,8 +168,15 @@ public class UserAccountServiceImpl implements UserAccountService{
     }
 
     @Override
-    public Message addThreadMessage(Message message) {
-        return messageRepository.save(message);
+    public Message addThreadMessage(NewMessageRequest request) {
+        Optional<User> opt = userRepository.findByUsername(request.getUsername());
+        Optional<Thread> opt2 = threadRepository.findByThreadId(request.getThreadId());
+        if(opt.isEmpty()) throw new RuntimeException("A non-existent username was provided!");
+        if(opt2.isEmpty()) throw new RuntimeException("Thread cannot be found!");
+        User user = opt.get();
+        Thread thread = opt2.get();
+        Message msg = new Message(user, request.getContent(), thread);
+        return messageRepository.save(msg);
     }
     @Override
     public List<Review> getUserReviews(String username, String type) {
@@ -176,9 +184,9 @@ public class UserAccountServiceImpl implements UserAccountService{
         if(user.isEmpty()) throw new RuntimeException("A non-existent username was provided");
         switch (type) {
             case "buyer":
-                return reviewRepository.getUserBuyerRatings(user.get().getUserId(), "buyer");
+                return reviewRepository.getUserBuyerRatings(user.get(), "buyer");
             case "seller":
-                return reviewRepository.getUserBuyerRatings(user.get().getUserId(), "seller");
+                return reviewRepository.getUserBuyerRatings(user.get(), "seller");
             default: throw new RuntimeException("An invalid rating time has been provided! Please user buyer or seller!");
         }
     }

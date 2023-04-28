@@ -17,6 +17,12 @@ public class Message {
 
     public Message(){}
 
+    public Message(User userId, String content, Thread threadId) {
+        this.content = content;
+        this.userId = userId;
+        this.threadId = threadId;
+    }
+
     public Long getMsgId() {
         return msgId;
     }

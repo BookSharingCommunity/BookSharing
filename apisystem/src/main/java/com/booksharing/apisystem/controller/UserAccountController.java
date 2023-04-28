@@ -3,6 +3,8 @@ package com.booksharing.apisystem.controller;
 import com.booksharing.apisystem.model.*;
 import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.NewMessageRequest;
+import com.booksharing.apisystem.requests.NewReviewRequest;
 import com.booksharing.apisystem.requests.UpdateUserRequest;
 import com.booksharing.apisystem.service.AuthenticationService;
 import com.booksharing.apisystem.service.TokenService;
@@ -93,7 +95,6 @@ public class UserAccountController {
 
     @PostMapping("threads/add/{buyer}/{seller}")
     public Thread addThread(@PathVariable String buyer, @PathVariable String seller) {
-
         return userAccountService.addUserThread(buyer, seller);
     }
 
@@ -108,13 +109,13 @@ public class UserAccountController {
     }
 
     @PostMapping("messages/add")
-    public Message addMessage(@RequestBody Message msg) {
+    public Message addMessage(@RequestBody NewMessageRequest msg) {
         return userAccountService.addThreadMessage(msg);
     }
 
     @PostMapping("review/add/{username}")
-    public Review addReview(@RequestBody Review review, @PathVariable String username) {
-        return userAccountService.addUserReview(review.getServiceType(), review.getRating(), username);
+    public Review addReview(@RequestBody NewReviewRequest review, @PathVariable String username) {
+        return userAccountService.addUserReview(review.getService(), review.getRating(), username);
     }
 
     @GetMapping("review/get/{type}/{username}")

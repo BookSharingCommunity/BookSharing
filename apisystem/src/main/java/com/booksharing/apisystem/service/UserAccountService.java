@@ -3,6 +3,7 @@ package com.booksharing.apisystem.service;
 import com.booksharing.apisystem.model.*;
 import com.booksharing.apisystem.model.Thread;
 import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.NewMessageRequest;
 import com.booksharing.apisystem.requests.UpdateUserRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +41,7 @@ public interface UserAccountService {
 
     public List<Message> getThreadMessages(Long threadId);
 
-    public Message addThreadMessage(Message message);
+    public Message addThreadMessage(NewMessageRequest request);
 
     public List<Review> getUserReviews(String username, String type);
 
