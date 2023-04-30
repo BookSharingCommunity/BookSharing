@@ -1,11 +1,17 @@
 package com.booksharing.apisystem.service;
 
 import com.booksharing.apisystem.exceptions.*;
-import com.booksharing.apisystem.model.UserAccount;
-import com.booksharing.apisystem.repository.UserAccountRepository;
+import com.booksharing.apisystem.model.*;
+import com.booksharing.apisystem.model.Thread;
+import com.booksharing.apisystem.repository.*;
+import com.booksharing.apisystem.requests.NewInventoryRequest;
+import com.booksharing.apisystem.requests.NewMessageRequest;
+import com.booksharing.apisystem.requests.UpdateUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,104 +19,187 @@ import java.util.Optional;
 public class UserAccountServiceImpl implements UserAccountService{
 
     @Autowired
-    private UserAccountRepository userAccountRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private InventoryRepository inventoryRepository;
+
+    @Autowired
+    private ThreadRepository threadRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
 
     @Override
-    public UserAccount saveUser(UserAccount user) {
+    public User addUser(User user) {
         //Adds a client to the database if they don't have an account
 
         //Handle pre-existing accounts
-        Optional<UserAccount> result = userAccountRepository.findByEmail(user.getEmail());
-        if(result.isPresent()) throw new ExistingAccountException(user.getEmail());
+        Optional<User> result = userRepository.findByUsername(user.getUsername());
+        if(result.isPresent()) throw new ExistingAccountException(user.getUsername());
 
+        user.setPassword(encoder.encode(user.getPassword()));
+        Role userRole = roleRepository.findRoleByName("ROLE_USER");
+        if(userRole == null) throw new RuntimeException();
+        user.setRole(userRole);
         //Add new account
-        return userAccountRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
-    public UserAccount loginUser(UserAccount user) {
-        //Validates the login of a user. Returns the account information if successful.
-
-        //Set up variables
-        Optional<UserAccount> result;
-        String email;
-        String pass;
-
-        //Initialize provided login
-        email = user.getEmail();
-        pass = user.getPass();
-
-        //Handle null login credential
-        if(email == null || pass == null) throw new MissingEmailPasswordException();
-
-        //Initialize query
-        result = userAccountRepository.findByEmail(email);
-
-        //User does not exist
-        if(result.isEmpty()) throw new EmailNotFoundException(email);
-
-        //Get result
-        user = result.get();
-
-        //Error instance where password is incorrect
-        if(!user.getPass().equals(pass)) throw new InvalidPasswordException(email);
-
-        //Correct password
-        return user;
-    }
-
-    @Override
-    public String removeUser(UserAccount user) {
+    public String removeUser(long id) {
         //Deletes a user from the database
-
-        //Error instance where email is null
-        if(user.getEmail() == null) throw new MissingEmailPasswordException();
-
-        //Search for user
-        Optional<UserAccount> result = userAccountRepository.findByEmail(user.getEmail());
-
-        //User does not exist
-        if(result.isEmpty()) throw new EmailNotFoundException(user.getEmail());
-
-        //Delete user
-        userAccountRepository.delete(result.get());
+        User user = userRepository.findByUserId(id);
+        userRepository.delete(user);
         return "Successfully deleted account!";
     }
 
     @Override
-    public List<UserAccount> getAllUsers() {
+    public List<User> getAllUsers() {
         //Gets and returns account information for all users
-        return userAccountRepository.findAll();
+        return userRepository.findAll();
     }
 
     @Override
-    public String getPassword(String email) {
-        //Gets and returns the account's password
-        Optional<UserAccount> result = userAccountRepository.findByEmail(email);
+    public User getUserByEmail(String email) {
+        //Gets user's account
+        Optional<User> result = userRepository.findByEmail(email);
         if(result.isEmpty()) throw new EmailNotFoundException(email);
-        return result.get().getPass();
+        return result.get();
     }
 
     @Override
-    public String updatePassword(String email, UserAccount user) {
-        //Updates the account's password and returns either success message or error message
+    public User getUserByUsername(String username) {
+        //Gets user's account
+        Optional<User> result = userRepository.findByUsername(username);
+        if(result.isEmpty()) throw new UsernameNotFoundException(username);
+        return result.get();
+    }
 
-        //Handle input errors
-        if(user.getEmail() == null || user.getPass() == null) throw new NullPasswordChangeAttemptException();
-        if(!user.getEmail().equals(email)) throw new RequestEmailInputsException();
-
-        //Find email in database
-        Optional<UserAccount> result = userAccountRepository.findByEmail(email);
-
-        //Handle if not found
-        if(result.isEmpty()) throw new EmailNotFoundException(email);
-
+    @Override
+    public User updateUser(String username, UpdateUserRequest request) {
         //Update Password
-        UserAccount temp = result.get();
-        temp.setPass(user.getPass());
-        user = temp;
+        Optional<User> temp = userRepository.findByUsername(username);
 
-        userAccountRepository.save(user);
-        return "Password has been successfully updated for the email: " + email;
+        if(temp.isEmpty()) throw new RuntimeException("No user was found with the provided username");
+
+        User user = temp.get();
+        user.setUserYear(request.getUserYear());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(encoder.encode(request.getPassword()));
+        userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public Inventory addInventory(NewInventoryRequest req) {
+        Optional<User> user = userRepository.findByUsername(req.getUsername());
+        if(user.isEmpty()) throw new RuntimeException("User does not exist");
+        Inventory inventory = new Inventory(user.get(), req.getCond(), req.getPrice(), req.getPicture(), req.getIsbn(), req.getTitle(), req.getVersion());
+        return inventoryRepository.save(inventory);
+    }
+
+    @Override
+    public Inventory removeInventory(long invId) {
+        Inventory inventory = inventoryRepository.findByInvId(invId);
+        if(inventory == null) throw new RuntimeException();
+        inventoryRepository.delete(inventory);
+        return inventory;
+    }
+
+    @Override
+    public Inventory getInventory(long invId) {
+        Inventory inventory = inventoryRepository.findByInvId(invId);
+        if(inventory == null) throw new RuntimeException();
+        return inventory;
+    }
+
+    @Override
+    public List<Inventory> searchInventory(String search) {
+        return inventoryRepository.searchForMatch(search);
+    }
+
+    @Override
+    public List<Inventory> getAllInventories() {
+        return inventoryRepository.findAll();
+    }
+
+    @Override
+    public List<Thread> getUserThreads(User user) {
+        return threadRepository.findPossibleThreads(user.getUserId());
+    }
+
+    @Override
+    public Thread addUserThread(String buyer, String seller) {
+        Optional<User> buyerObj = userRepository.findByUsername(buyer);
+        Optional<User> sellerObj = userRepository.findByUsername(seller);
+        if(buyerObj.isEmpty() || sellerObj.isEmpty()) throw new RuntimeException("A non-existent username was provided");
+        Thread thread = new Thread();
+        thread.setBuyerId(buyerObj.get());
+        thread.setSellerId(sellerObj.get());
+        return threadRepository.save(thread);
+    }
+
+    @Override
+    public Thread deleteUserThread(Thread thread) {
+        threadRepository.delete(thread);
+        messageRepository.deleteByThreadId(thread.getThreadId());
+        return thread;
+    }
+
+    @Override
+    public List<Message> getThreadMessages(Long threadId) {
+        return messageRepository.searchByMatch(threadId);
+    }
+
+    @Override
+    public Message addThreadMessage(NewMessageRequest request) {
+        Optional<User> opt = userRepository.findByUsername(request.getUsername());
+        Optional<Thread> opt2 = threadRepository.findByThreadId(request.getThreadId());
+        if(opt.isEmpty()) throw new RuntimeException("A non-existent username was provided!");
+        if(opt2.isEmpty()) throw new RuntimeException("Thread cannot be found!");
+        User user = opt.get();
+        Thread thread = opt2.get();
+        Message msg = new Message(user, request.getContent(), thread);
+        return messageRepository.save(msg);
+    }
+    @Override
+    public List<Review> getUserReviews(String username, String type) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isEmpty()) throw new RuntimeException("A non-existent username was provided");
+        switch (type) {
+            case "buyer":
+                return reviewRepository.getUserBuyerRatings(user.get(), "buyer");
+            case "seller":
+                return reviewRepository.getUserBuyerRatings(user.get(), "seller");
+            default: throw new RuntimeException("An invalid rating time has been provided! Please user buyer or seller!");
+        }
+    }
+    @Override
+    public Review addUserReview(String type, float rating, String username){
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isEmpty()) throw new RuntimeException();
+        Review review = new Review(type, user.get(), rating);
+        return reviewRepository.save(review);
+    }
+    @Override
+    public Review deleteUserReview(Review review){
+        reviewRepository.delete(review);
+        return review;
     }
 }
