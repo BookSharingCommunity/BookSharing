@@ -1,0 +1,80 @@
+.messageScreen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .messageScreen__header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .messageScreen__messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .messageScreen__message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .user1 .messageScreen__message {
+    background-color: #f1f1f1;
+    align-self: flex-start;
+  }
+  
+  .user2 .messageScreen__message {
+    background-color: #d1e8ff;
+    align-self: flex-end;
+  }
+  
+  .messageScreen__inputForm {
+    display: flex;
+    padding: 10px;
+  }
+  
+  .messageScreen__input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .messageScreen__sendButton {
+    padding: 10px;
+    margin-left: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .messageScreen__sendButton:hover {
+    background-color: #0056b3;
+  }
+  .upload-product-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .yellow-button {
+    background-color: #ffc107;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .yellow-button:hover {
+    background-color: #ffdb58;
+  }
