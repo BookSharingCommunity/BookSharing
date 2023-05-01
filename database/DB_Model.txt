@@ -1,0 +1,63 @@
+Table booksharing.users {
+  account_id int [pk]
+  email varchar
+  username varchar
+  password varchar
+}
+Table booksharing.user_roles {
+  account_id int [ref: > booksharing.users.account_id]
+  role_id int [ref: > booksharing.roles.role_id]
+}
+Table booksharing.roles {
+  role_id int [pk]
+  name varchar
+}
+Table booksharing.user_profiles {
+  account_id int [ref: > booksharing.users.account_id]
+  profile_id int [ref: > booksharing.profile.profile_id]
+}
+Table booksharing.profile {
+  profile_id int [pk]
+  academic_year varchar
+  profile_pic blob
+  seller_rating int
+  seller_count int
+  buyer_rating int
+  buyer_count int
+}
+Table booksharing.messages {
+  message_id int [pk]
+  account_id int [ref: > booksharing.users.account_id]
+  content varchar
+  sent_time timestamp
+}
+Table booksharing.threads {
+  thread_id int
+  message_id int [ref: > booksharing.messages.message_id]
+}
+Table booksharing.inventory {
+  inventory_id int [pk]
+  account_id int [ref: > booksharing.users.account_id]
+  book_picture blob
+  book_id int [ref: > booksharing.books.book_id]
+}
+Table booksharing.books {
+  book_id int [pk]
+  isbn varchar
+  title varchar
+  subject varchar
+  version int
+  condition varchar
+}
+Table booksharing.reviews {
+  review_id int [pk]
+  service_id int [ref: > booksharing.services.service_id]
+  reviewer_id int [ref: > booksharing.users.account_id]
+  reviewee_id int [ref: > booksharing.users.account_id]
+  content varchar
+  rating int
+}
+Table booksharing.services {
+  service_id int [pk]
+  name varchar
+}
